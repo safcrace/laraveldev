@@ -12,6 +12,11 @@ use Carbon\Carbon;
 
 class ArticlesController extends Controller {
 
+	public function __construct()
+	{
+		$this->middleware('auth', ['except' => 'index']);
+	}
+
 	public function index()
 	{
 		$articles = Article::latest('published_at')->published()->get();
@@ -19,15 +24,14 @@ class ArticlesController extends Controller {
 		return view('articles.index', compact('articles'));
 	}
 
-	public function show($id)
-	{		
-		$article = Article::findOrFail($id);
+	public function show(Article $article)
+	{
 		//dd($article->published_at);
 		return view('articles.show', compact('article'));
 	}
 
 	public function create()
-	{
+	{		
 		return View('articles.create');
 	}
 
@@ -38,15 +42,13 @@ class ArticlesController extends Controller {
 		return redirect('articles');
 	}
 
-	public function edit($id)
-	{
-		$article = Article::findOrFail($id);
+	public function edit(Article $article)
+	{		
 		return View('articles.edit', compact('article'));
 	}
 
-	public function update($id, ArticleRequest $request)
-	{
-		$article = Article::findOrFail($id);
+	public function update(Article $article, ArticleRequest $request)
+	{	
 		$article->update($request->all());
 		return redirect('articles');
 	}
